@@ -11,6 +11,6 @@ namespace GymManagement.DAL.Models
         public string Description { get; set; } = default!;
         public int Capacity { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime Enddate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }
