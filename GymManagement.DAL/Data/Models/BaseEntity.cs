@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymManagement.DAL.Models
+namespace GymManagement.DAL.Data.Models
 {
     public class BaseEntity
     {

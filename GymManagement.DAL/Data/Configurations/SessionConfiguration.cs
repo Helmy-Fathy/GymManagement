@@ -1,4 +1,4 @@
-﻿using GymManagement.DAL.Models;
+﻿using GymManagement.DAL.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymManagement.DAL.Configurations
+namespace GymManagement.DAL.Data.Configurations
 {
     internal class SessionConfiguration : IEntityTypeConfiguration<Session>
     {

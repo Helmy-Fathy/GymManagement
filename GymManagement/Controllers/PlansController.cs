@@ -1,6 +1,6 @@
 ﻿using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
-using GymManagement.DbContexts;
+using GymManagement.DAL.Data.DbContexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;

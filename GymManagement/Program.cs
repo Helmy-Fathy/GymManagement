@@ -1,6 +1,6 @@
+using GymManagement.DAL.Data.DbContexts;
 using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
-using GymManagement.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement
