@@ -1,4 +1,5 @@
-﻿using GymManagement.DAL.Data.Models;
+﻿using GymManagement.BLL.Services.Interfaces;
+using GymManagement.DAL.Data.Models;
 using GymManagement.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,15 +7,20 @@ namespace GymManagement.PL.Controllers
 {
     public class MembersController : Controller
     {
-        private readonly IGenericRepository<Member> _memberRepository;
+        private readonly IMemberService _memberService;
 
-        public MembersController(IGenericRepository<Member> memberRepository)
+        public MembersController(IMemberService memberService )
         {
-            _memberRepository = memberRepository;
+            _memberService = memberService;
         }
 
         // GET BaseUrl/Members/Index
         // Index - List all members
+        public async Task<IActionResult> Index(CancellationToken ct)
+        {
+            var members = await _memberService.GetAllMembersAsync(ct);
+            return View(members);
+        }
 
         //GET BaseUrl/Members/MemberDeatails/{id}
         //MemberDetails - show one member's details
@@ -32,7 +38,7 @@ namespace GymManagement.PL.Controllers
 
         #region Edit Member
         //GET BaseUrl/Members/Edit/{id}
-        //Edit - Display edit form
+        //EditMember - Display edit form
 
         //POST BaseUrl/Members/Edit {member}
         //Edit - Submit form  
