@@ -3,6 +3,7 @@ using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
 using GymManagement.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Threading.Tasks;
 
 namespace GymManagement.PL.Controllers
@@ -44,15 +45,15 @@ namespace GymManagement.PL.Controllers
         //HealthRecordDeatails - show one member's HealthRecord details
         public async Task<IActionResult> HealthRecordDeatails(int id, CancellationToken ct)
         {
-            // Get Health Record By member Id
+            
             var result = await _memberService.GetMemberHealthRecordAsync(id , ct);
-            // Check Is Health Record Null => Return Index With Message
+            
             if (result is null)
             {
                 TempData["ErrorMessage"] = "Health Record Not Found";
-                return RedirectToAction(nameof(Index))
+                return RedirectToAction(nameof(Index));
             }
-            // Health Record  Is Not Null => Return View Data
+         
             return View(result);
         }
 
@@ -84,9 +85,36 @@ namespace GymManagement.PL.Controllers
         #region Edit Member
         //GET BaseUrl/Members/Edit/{id}
         //EditMember - Display edit form
+        [HttpGet]
+        public async Task<IActionResult> EditMember (int id, CancellationToken ct)
+        {
+            var member = await _memberService.GetMemberToUpdateAsync(id, ct);
+            if (member == null)
+            {
+                TempData["ErrorMessage"] = "Member Not Found";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(member);
+        }
+
 
         //POST BaseUrl/Members/Edit {member}
         //Edit - Submit form  
+        [HttpPost]
+        public async Task<IActionResult> EditMember([FromRoute]int id ,MemberToUpdateViewModel model , CancellationToken ct)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var result =await _memberService.UpdateMemberDetailsAsync(id, model, ct);
+            if (result)
+                TempData["SuccessMessage"] = "Member Updated Successfully";
+            else
+                TempData["ErrorMessage"] = "Failed To Update Member";
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
         #endregion
 
         #region Delete Member 

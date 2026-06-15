@@ -124,5 +124,45 @@ namespace GymManagement.BLL.Services.Classes
                     Note = healthRecord.Note,
                 };
         }
+
+        public async Task<MemberToUpdateViewModel?> GetMemberToUpdateAsync(int MemberId, CancellationToken ct = default)
+        {
+            var member = await _memberRepository.GetByIdAsync(MemberId, ct);
+            if (member == null) return null;
+            else return new MemberToUpdateViewModel()
+            {
+                Name = member.Name,     
+                Phone = member.PhoneNumber,
+                Email = member.Email,
+                BuildingNumber = member.Address.BuildingNumber,
+                Street = member.Address.Street,
+                City = member.Address.City,
+                Photo = member.Photo,
+            };
+        }
+
+        public async Task<bool> UpdateMemberDetailsAsync(int id, MemberToUpdateViewModel model, CancellationToken ct = default)
+        {
+            var member = await _memberRepository.GetByIdAsync(id, ct);
+            if(member == null) return false;
+
+            //Check Email
+            var emailExist = await _memberRepository.AnyAsync(x => x.Email == model.Email && x.Id !=id , ct);
+            //Check Phone
+            var phoneExist = await _memberRepository.AnyAsync(x => x.PhoneNumber == model.Phone && x.Id != id , ct);
+            //Email or Phone exist Return false
+            if (emailExist || phoneExist) return false;
+
+            member.Email = model.Email;
+            member.PhoneNumber = model.Phone;
+            member.Address.City = model.City;
+            member.Address.Street = model.Street;
+            member.Address.BuildingNumber = model.BuildingNumber;
+            member.UpdatedAt = DateTime.Now;
+            
+            var result = await _memberRepository.UpdateAsync(member ,ct);
+            return result > 0;
+
+        }
     }
 }
