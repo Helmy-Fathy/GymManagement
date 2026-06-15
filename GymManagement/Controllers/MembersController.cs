@@ -26,9 +26,29 @@ namespace GymManagement.PL.Controllers
 
         //GET BaseUrl/Members/MemberDeatails/{id}
         //MemberDetails - show one member's details
+        public async Task<IActionResult> MemberDetails(int id, CancellationToken ct)
+        {
+
+            var member = await _memberService.GetMemberDetailsByIdAsync(id , ct);
+
+            if(member is null)
+            {
+                TempData["ErrorMessage"] = "Member Not Found";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(member);
+        }
 
         //GET BaseUrl/Members/HealthRecordDeatails/{id}
         //HealthRecordDeatails - show one member's HealthRecord details
+        //public IActionResult HealthRecordDeatails(int id, CancellationToken ct)
+        //{
+        //    // Get Health Record By member Id
+        //    // Check Is Health Record Null => Return Index With Message
+        //    // Health Record  Is Not Null => Return View Data
+        //}
+
 
         #region Create Member 
         //GET BaseUrl/Members/Create
@@ -42,7 +62,7 @@ namespace GymManagement.PL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMember(CreateMemberViewModel model, CancellationToken ct)
         {
-            if(!ModelState.IsValid) return View(nameof(Create), model);
+            if (!ModelState.IsValid) return View(nameof(Create), model);
 
             var result = await _memberService.CreateMemberAsync(model, ct);
             if (result)
