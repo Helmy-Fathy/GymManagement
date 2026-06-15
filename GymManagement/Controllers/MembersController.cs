@@ -42,12 +42,19 @@ namespace GymManagement.PL.Controllers
 
         //GET BaseUrl/Members/HealthRecordDeatails/{id}
         //HealthRecordDeatails - show one member's HealthRecord details
-        //public IActionResult HealthRecordDeatails(int id, CancellationToken ct)
-        //{
-        //    // Get Health Record By member Id
-        //    // Check Is Health Record Null => Return Index With Message
-        //    // Health Record  Is Not Null => Return View Data
-        //}
+        public async Task<IActionResult> HealthRecordDeatails(int id, CancellationToken ct)
+        {
+            // Get Health Record By member Id
+            var result = await _memberService.GetMemberHealthRecordAsync(id , ct);
+            // Check Is Health Record Null => Return Index With Message
+            if (result is null)
+            {
+                TempData["ErrorMessage"] = "Health Record Not Found";
+                return RedirectToAction(nameof(Index))
+            }
+            // Health Record  Is Not Null => Return View Data
+            return View(result);
+        }
 
 
         #region Create Member 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GymManagement.BLL.ViewModels.MemberViewModels
 {
-    public class HelathRecordViewModel
+    public class HealthRecordViewModel
     {
         [Range(0.1,300, ErrorMessage ="Height must be greater than 0")]
         public decimal Height { get; set; }
