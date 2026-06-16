@@ -1,5 +1,5 @@
-﻿@using GymManagement.DAL.Data.Models
-@model IEnumerable<Plan>
+﻿@using GymManagement.BLL.ViewModels.PlanViewModels
+@model IEnumerable<PlanViewModel>
 
 @if (TempData["SuccessMessage"] is not null)
 {
@@ -66,7 +66,7 @@
                                         <a asp-controller="Plans" asp-action="Edit" asp-route-id="@plan.Id" class="btn btn-outline btn-sm flex-fill">
                                             <i class="bi bi-pencil me-1"></i>Edit
                                         </a>
-                                        <form method="post" class="flex-fill">
+                                        <form asp-controller="Plans" asp-action="Activate" asp-route-id="@plan.Id" method="post" class="flex-fill">
 
                                             @if (plan.IsActive)
                                             {
