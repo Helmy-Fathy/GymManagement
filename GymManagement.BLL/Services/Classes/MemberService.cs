@@ -16,16 +16,19 @@ namespace GymManagement.BLL.Services.Classes
         private readonly IGenericRepository<Membership> _membershipRepository;
         private readonly IGenericRepository<Plan> _planRepository;
         private readonly IGenericRepository<HealthRecord> _healthRecordRepository;
+        private readonly IGenericRepository<Booking> _bookingRepository;
 
         public MemberService(IGenericRepository<Member> memberRepository,
             IGenericRepository<Membership> membershipRepository,
             IGenericRepository<Plan> planRepository,
-            IGenericRepository<HealthRecord> healthRecordRepository)
+            IGenericRepository<HealthRecord> healthRecordRepository,
+            IGenericRepository<Booking> bookingRepository)
         {
             _memberRepository = memberRepository;
             _membershipRepository = membershipRepository;
             _planRepository = planRepository;
             _healthRecordRepository = healthRecordRepository;
+            _bookingRepository = bookingRepository;
         }
 
         public async Task<IEnumerable<MemberViewModel>> GetAllMembersAsync(CancellationToken ct = default)
@@ -131,7 +134,7 @@ namespace GymManagement.BLL.Services.Classes
             if (member == null) return null;
             else return new MemberToUpdateViewModel()
             {
-                Name = member.Name,     
+                Name = member.Name,
                 Phone = member.PhoneNumber,
                 Email = member.Email,
                 BuildingNumber = member.Address.BuildingNumber,
@@ -144,12 +147,12 @@ namespace GymManagement.BLL.Services.Classes
         public async Task<bool> UpdateMemberDetailsAsync(int id, MemberToUpdateViewModel model, CancellationToken ct = default)
         {
             var member = await _memberRepository.GetByIdAsync(id, ct);
-            if(member == null) return false;
+            if (member == null) return false;
 
             //Check Email
-            var emailExist = await _memberRepository.AnyAsync(x => x.Email == model.Email && x.Id !=id , ct);
+            var emailExist = await _memberRepository.AnyAsync(x => x.Email == model.Email && x.Id != id, ct);
             //Check Phone
-            var phoneExist = await _memberRepository.AnyAsync(x => x.PhoneNumber == model.Phone && x.Id != id , ct);
+            var phoneExist = await _memberRepository.AnyAsync(x => x.PhoneNumber == model.Phone && x.Id != id, ct);
             //Email or Phone exist Return false
             if (emailExist || phoneExist) return false;
 
@@ -159,10 +162,22 @@ namespace GymManagement.BLL.Services.Classes
             member.Address.Street = model.Street;
             member.Address.BuildingNumber = model.BuildingNumber;
             member.UpdatedAt = DateTime.Now;
-            
-            var result = await _memberRepository.UpdateAsync(member ,ct);
+
+            var result = await _memberRepository.UpdateAsync(member, ct);
             return result > 0;
 
+        }
+
+        public async Task<bool> RemoveMemberAsync(int MemberId, CancellationToken ct = default)
+        {
+            var member = await _memberRepository.GetByIdAsync(MemberId, ct);
+            if (member == null) return false;
+
+            var hasFutureBookings = await _bookingRepository.AnyAsync(b => b.MemberId == MemberId && b.Session.StartDate > DateTime.Now, ct);
+            if (hasFutureBookings) return false;
+
+            var result = await _memberRepository.DeleteAsync(member, ct);
+            return result > 0;
         }
     }
 }
