@@ -33,7 +33,7 @@ namespace GymManagement.Controllers
             }
             else
                 return View(plan);
-        }
+        }       
 
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace GymManagement.Controllers
             }
             else
                 return View(plan);
-        }
+        } 
 
 
         [HttpPost]
