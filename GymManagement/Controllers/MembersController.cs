@@ -43,7 +43,7 @@ namespace GymManagement.PL.Controllers
 
         //GET BaseUrl/Members/HealthRecordDeatails/{id}
         //HealthRecordDeatails - show one member's HealthRecord details
-        public async Task<IActionResult> HealthRecordDeatails(int id, CancellationToken ct)
+        public async Task<IActionResult> HealthRecordDetails(int id, CancellationToken ct)
         {
 
             var result = await _memberService.GetMemberHealthRecordAsync(id, ct);
@@ -140,7 +140,7 @@ namespace GymManagement.PL.Controllers
         {
             var result = await _memberService.RemoveMemberAsync(id, ct);
             if (result)
-                TempData["SiccessMessage"] = "Member Deleted Successfully";
+                TempData["SuccessMessage"] = "Member Deleted Successfully";
             else
                 TempData["ErrorMessage"] = "Failed To Delete Member";
 
