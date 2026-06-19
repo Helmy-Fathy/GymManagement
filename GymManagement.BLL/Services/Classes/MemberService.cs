@@ -1,4 +1,5 @@
-﻿using GymManagement.BLL.Services.Interfaces;
+﻿using AutoMapper;
+using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
 using GymManagement.DAL.Repositories.Interfaces;
@@ -13,10 +14,12 @@ namespace GymManagement.BLL.Services.Classes
     public class MemberService : IMemberService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public MemberService(IUnitOfWork unitOfWork)
+        public MemberService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<MemberViewModel>> GetAllMembersAsync(CancellationToken ct = default)
@@ -24,15 +27,7 @@ namespace GymManagement.BLL.Services.Classes
             var members = await _unitOfWork.GetRepository<Member>().GetAllAsync(ct: ct);
             if (!members.Any()) return [];
 
-            var membersViewModel = members.Select(m => new MemberViewModel()
-            {
-                Name = m.Name,
-                Email = m.Email,
-                Gender = m.Gender.ToString(),
-                Phone = m.PhoneNumber,
-                Photo = m.Photo,
-                Id = m.Id
-            });
+            var membersViewModel = _mapper.Map<IEnumerable<Member>, IEnumerable<MemberViewModel>>(members);
 
 
             return membersViewModel;
@@ -48,28 +43,7 @@ namespace GymManagement.BLL.Services.Classes
             //Email or Phone exist Return false
             if (emailExist || phoneExist) return false;
             //Else Return true Add member
-            var member = new Member()
-            {
-                Name = model.Name,
-                Email = model.Email,
-                Gender = model.Gender,
-                PhoneNumber = model.Phone,
-                DateOfBirth = model.DateOfBirth,
-                Address = new Address()
-                {
-                    BuildingNumber = model.BuildingNumber,
-                    City = model.City,
-                    Street = model.Street,
-                },
-                HealthRecord = new HealthRecord()
-                {
-                    Height = model.HelathRecordViewModel.Height,
-                    Weight = model.HelathRecordViewModel.weight,
-                    BloodType = model.HelathRecordViewModel.BloodType,
-                    Note = model.HelathRecordViewModel.Note,
-                }
-
-            };
+            var member = _mapper.Map<CreateMemberViewModel, Member>(model);
 
             _unitOfWork.GetRepository<Member>().Add(member); // Add Local
             var result = await _unitOfWork.SaveChangesAsync(ct);
@@ -82,15 +56,7 @@ namespace GymManagement.BLL.Services.Classes
 
             if (member == null) return null;
 
-            var model = new MemberViewModel()
-            {
-                Name = member.Name,
-                Phone = member.PhoneNumber,
-                Email = member.Email,
-                DateOfBirth = member.DateOfBirth.ToShortDateString(),
-                Gender = member.Gender.ToString(),
-                Addres = $"{member.Address.BuildingNumber} - {member.Address.Street} - {member.Address.City}",
-            };
+            var model = _mapper.Map<Member, MemberViewModel>(member);
 
             var activeMembership = await _unitOfWork.GetRepository<Membership>().FirstOrDefaultAsync(x => x.MemberId == MemberId && x.EndDate > DateTime.Now);
 
@@ -110,29 +76,14 @@ namespace GymManagement.BLL.Services.Classes
             var healthRecord = await _unitOfWork.GetRepository<HealthRecord>().FirstOrDefaultAsync(x => x.MemberId == MemberId, ct: ct);
             if (healthRecord == null) return null;
             else
-                return new HealthRecordViewModel()
-                {
-                    weight = healthRecord.Weight,
-                    Height = healthRecord.Height,
-                    BloodType = healthRecord.BloodType,
-                    Note = healthRecord.Note,
-                };
+                return _mapper.Map<HealthRecord, HealthRecordViewModel>(healthRecord);
         }
 
         public async Task<MemberToUpdateViewModel?> GetMemberToUpdateAsync(int MemberId, CancellationToken ct = default)
         {
             var member = await _unitOfWork.GetRepository<Member>().GetByIdAsync(MemberId, ct);
             if (member == null) return null;
-            else return new MemberToUpdateViewModel()
-            {
-                Name = member.Name,
-                Phone = member.PhoneNumber,
-                Email = member.Email,
-                BuildingNumber = member.Address.BuildingNumber,
-                Street = member.Address.Street,
-                City = member.Address.City,
-                Photo = member.Photo,
-            };
+            else return _mapper.Map<Member, MemberToUpdateViewModel>(member);
         }
 
         public async Task<bool> UpdateMemberDetailsAsync(int id, MemberToUpdateViewModel model, CancellationToken ct = default)
@@ -147,14 +98,10 @@ namespace GymManagement.BLL.Services.Classes
             //Email or Phone exist Return false
             if (emailExist || phoneExist) return false;
 
-            member.Email = model.Email;
-            member.PhoneNumber = model.Phone;
-            member.Address.City = model.City;
-            member.Address.Street = model.Street;
-            member.Address.BuildingNumber = model.BuildingNumber;
+            _mapper.Map(model, member);
             member.UpdatedAt = DateTime.Now;
 
-             _unitOfWork.GetRepository<Member>().Update(member); //Update Local
+            _unitOfWork.GetRepository<Member>().Update(member); //Update Local
             var result = await _unitOfWork.SaveChangesAsync(ct);
             return result > 0;
 
@@ -168,7 +115,7 @@ namespace GymManagement.BLL.Services.Classes
             var hasFutureBookings = await _unitOfWork.GetRepository<Booking>().AnyAsync(b => b.MemberId == MemberId && b.Session.StartDate > DateTime.Now, ct);
             if (hasFutureBookings) return false;
 
-             _unitOfWork.GetRepository<Member>().Delete(member); // Delete Local
+            _unitOfWork.GetRepository<Member>().Delete(member); // Delete Local
             var result = await _unitOfWork.SaveChangesAsync(ct);
             return result > 0;
         }
