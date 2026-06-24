@@ -108,5 +108,34 @@ namespace GymManagement.PL.Controllers
             }
         }
         #endregion
+
+        #region Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id, CancellationToken ct)
+        {
+            var result = await _sessionService.GetSessionByIdAsync(id, ct);
+            if (result.success)
+            {
+                return View(result.value);
+            }
+            else
+            {
+                TempData["ErrorMessage"] = result.error;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken ct)
+        {
+            var result = await _sessionService.RemoveSessionAsync(id, ct);
+
+            TempData[result.success ? "SuccessMessage" : "ErrorMessage"] = result.success ? "Session Deleted" : result.error;
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        #endregion
+
     }
 }

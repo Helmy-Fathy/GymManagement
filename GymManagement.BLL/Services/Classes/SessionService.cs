@@ -121,8 +121,8 @@ namespace GymManagement.BLL.Services.Classes
 
             if (model.EndDate <= model.StartDate) return Result.Validation("EndDate must be after StartDate");
 
-            var bookingCount = await _unitOfWork.SessionRepository.GetCountOfBookedSlotsAsync(sessionId, ct);
-            if (bookingCount > 0)
+            var bookedCount = await _unitOfWork.SessionRepository.GetCountOfBookedSlotsAsync(sessionId, ct);
+            if (bookedCount > 0)
                 return Result.Validation("Can Not Update Session that Has Bookings");
 
             if (model.StartDate <= DateTime.Now) return Result.Validation("Start Date Must Be In Future");
@@ -141,6 +141,22 @@ namespace GymManagement.BLL.Services.Classes
             _unitOfWork.SessionRepository.Update(session);
             var result = await _unitOfWork.SaveChangesAsync(ct);
             return result > 0 ? Result.Ok() : Result.Fail("Failed To Update Session");
+        }
+
+        public async Task<Result> RemoveSessionAsync(int sessionId, CancellationToken ct = default)
+        {
+            var session = await _unitOfWork.SessionRepository.GetByIdAsync(sessionId, ct);
+            if (session is null) return Result.NotFound("Session Not Found");
+
+            if (session.EndDate >= DateTime.Now) return Result.Validation("Can Not Delete Session that Has Not Ended Yet");
+
+            var bookedCount = await _unitOfWork.SessionRepository.GetCountOfBookedSlotsAsync(sessionId, ct);
+            if (bookedCount > 0)
+                return Result.Validation("Can Not Delete Session that Has Bookings");
+
+            _unitOfWork.SessionRepository.Delete(session);
+            var result = await _unitOfWork.SaveChangesAsync(ct);
+            return result > 0 ? Result.Ok() : Result.Fail("Failed To Delete Session");
         }
     }
 }
