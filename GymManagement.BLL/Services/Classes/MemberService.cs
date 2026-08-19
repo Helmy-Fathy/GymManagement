@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymManagement.BLL.Services.Attachment;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
@@ -15,11 +16,13 @@ namespace GymManagement.BLL.Services.Classes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentService _attachmentService;
 
-        public MemberService(IUnitOfWork unitOfWork, IMapper mapper)
+        public MemberService(IUnitOfWork unitOfWork, IMapper mapper, IAttachmentService attachmentService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentService = attachmentService;
         }
 
         public async Task<IEnumerable<MemberViewModel>> GetAllMembersAsync(CancellationToken ct = default)
@@ -42,12 +45,23 @@ namespace GymManagement.BLL.Services.Classes
             var phoneExist = await _unitOfWork.GetRepository<Member>().AnyAsync(x => x.PhoneNumber == model.Phone, ct);
             //Email or Phone exist Return false
             if (emailExist || phoneExist) return false;
+
+            //Upload Photo
+            var storedPhotoName = await _attachmentService.UploadAsync(model.PhotoFile.OpenReadStream(), model.PhotoFile.FileName, "MembersPhotos", ct);
+            if (string.IsNullOrWhiteSpace(storedPhotoName)) return false;
+
             //Else Return true Add member
             var member = _mapper.Map<CreateMemberViewModel, Member>(model);
-
+            member.Photo = storedPhotoName;
             _unitOfWork.GetRepository<Member>().Add(member); // Add Local
             var result = await _unitOfWork.SaveChangesAsync(ct);
-            return result > 0;
+            if (result > 0)
+                return true;
+            else
+            {
+                //Delete Uploaded Photo
+                return false;
+            }
         }
 
         public async Task<MemberViewModel?> GetMemberDetailsByIdAsync(int MemberId, CancellationToken ct = default)

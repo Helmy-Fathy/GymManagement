@@ -1,4 +1,5 @@
 using GymManagement.BLL;
+using GymManagement.BLL.Services.Attachment;
 using GymManagement.BLL.Services.Classes;
 using GymManagement.BLL.Services.Interfaces;
 using GymManagement.DAL.Data.DataSeeding;
@@ -36,6 +37,7 @@ namespace GymManagement
             builder.Services.AddScoped<ISessionService, SessionService>();
             builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
             builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+            builder.Services.AddScoped<IAttachmentService, AttachmentService>();
 
             var app = builder.Build();
 
