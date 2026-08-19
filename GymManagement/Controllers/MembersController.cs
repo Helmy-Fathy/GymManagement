@@ -1,4 +1,5 @@
-﻿using GymManagement.BLL.Services.Interfaces;
+﻿using GymManagement.BLL.Services.Attachment;
+using GymManagement.BLL.Services.Interfaces;
 using GymManagement.BLL.ViewModels.MemberViewModels;
 using GymManagement.DAL.Data.Models;
 using GymManagement.DAL.Repositories.Interfaces;
@@ -11,11 +12,27 @@ namespace GymManagement.PL.Controllers
     public class MembersController : Controller
     {
         private readonly IMemberService _memberService;
+        private readonly IAttachmentService _attachmentService;
 
-        public MembersController(IMemberService memberService)
+        public MembersController(IMemberService memberService, IAttachmentService attachmentService)
         {
             _memberService = memberService;
+            _attachmentService = attachmentService;
         }
+
+        #region Get Member Photo
+        [HttpGet]
+        public async Task<IActionResult> Picture(int id)
+        {
+            var member = await _memberService.GetMemberDetailsByIdAsync(id);
+            if (member == null || string.IsNullOrWhiteSpace(member.Photo))
+                return NotFound();
+
+            var result = _attachmentService.GetFile(member.Photo, "MembersPhotos");
+            if (result == null) return NotFound();
+            return File(result.Value.stream, result.Value.contentType);
+        }
+        #endregion
 
         // GET BaseUrl/Members/Index
         // Index - List all members

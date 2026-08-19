@@ -8,12 +8,21 @@
                 <div class="col-md-6">
                     <div class="card card-details border-0 p-2 shadow">
                         <div class="text-center mt-3">
-                            <img src="~/images/User.jpg" alt="MemberName" class="rounded-circle"
-                                 style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff; margin-top: -60px;" />
+                            @if (string.IsNullOrWhiteSpace(Model.Photo))
+                            {
+                                <img src="~/images/Ellipse 7.jpg" alt="MemberName" class="rounded-circle"
+                                     style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff; margin-top: -60px;" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Action("Picture", "Members", new { id = Model.Id })" alt="MemberName" class="rounded-circle"
+                                     style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff; margin-top: -60px;" />
+                            }
+
                         </div>
                         <div class="card-body text-center">
                             <h2 class="mb-1 text-primary-color">@Model.Name</h2>
-                            <h4 class="mb-2 pb-1 border-bottom d-block">@(Model.PlanName?? "No Plan")</h4>
+                            <h4 class="mb-2 pb-1 border-bottom d-block">@(Model.PlanName ?? "No Plan")</h4>
                             <div class="mt-4 text-start">
                                 <div class="row g-3">
                                     <div class="col-12">

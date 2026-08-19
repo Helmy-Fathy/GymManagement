@@ -20,6 +20,43 @@ namespace GymManagement.BLL.Services.Attachment
             _logger = logger;
             _env = env;
         }
+
+        public bool Delete(string fileName, string folderName)
+        {
+            var fullPath = Path.Combine(_env.ContentRootPath, folderName, fileName);
+
+            try
+            {
+                if (!File.Exists(fullPath)) return false;
+
+                File.Delete(fullPath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed To Delete Attachment {fileName}");
+                return false;
+            }
+        }
+
+        public (Stream stream, string contentType)? GetFile(string fileName, string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(folderName)) return null;
+            var fullPath = Path.Combine(_env.ContentRootPath, folderName, fileName);
+            if (!File.Exists(fullPath)) return null;
+
+            var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read);
+            var extension = Path.GetExtension(fullPath).ToLower();
+            var contentType = extension switch
+            {
+                ".png" => "image/png",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                _ => "application/octet-stream" //Binary Data 
+            };
+
+            return (stream, contentType);
+        }
+
         public async Task<string?> UploadAsync(Stream fileStream, string fileName, string folderName, CancellationToken ct = default)
         {
             if (fileStream == null || !fileStream.CanRead || fileStream.Length == 0) return null;

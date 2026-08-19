@@ -60,6 +60,7 @@ namespace GymManagement.BLL.Services.Classes
             else
             {
                 //Delete Uploaded Photo
+                _attachmentService.Delete(storedPhotoName, "MembersPhotos");
                 return false;
             }
         }
