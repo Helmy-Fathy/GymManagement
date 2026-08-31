@@ -19,7 +19,7 @@ namespace GymManagement.DAL.Data.DataSeeding
             {
                 var hasUsers = await userManager.Users.AnyAsync(ct);
                 var hasRoles = await roleManager.Roles.AnyAsync(ct);
-                if (hasRoles || hasUsers) return;
+                if (hasRoles && hasUsers) return;
 
                 var roles = new List<IdentityRole>()
                 {
@@ -47,7 +47,7 @@ namespace GymManagement.DAL.Data.DataSeeding
                         FirstName = "Helmy",
                         LastName = "Fathy",
                         Email = "7elmyfathy@gmail.com",
-                        UserName = "Helmy Fathy",
+                        UserName = "HelmyFathy",
                         PhoneNumber = "01140137819"
                     };
                     await userManager.CreateAsync(MainAdmin, "P@ssw0rd");
@@ -58,7 +58,7 @@ namespace GymManagement.DAL.Data.DataSeeding
                         FirstName = "Mohamed",
                         LastName = "Fathy",
                         Email = "mohamedfathy@gmail.com",
-                        UserName = "Mohamed Fathy",
+                        UserName = "MohamedFathy",
                         PhoneNumber = "01066448576"
                     };
                     await userManager.CreateAsync(Admin, "P@ssw0rd");

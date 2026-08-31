@@ -1,6 +1,7 @@
 ﻿using GymManagement.BLL.ViewModels.AccountViewModels;
 using GymManagement.Controllers;
 using GymManagement.DAL.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -60,6 +61,13 @@ namespace GymManagement.PL.Controllers
         }
 
         //Post Logout
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> LogOut()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login)); 
+        }
         //Get AccessDenied
 
     }
