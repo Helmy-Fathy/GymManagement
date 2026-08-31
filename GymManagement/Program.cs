@@ -51,6 +51,11 @@ namespace GymManagement
             })
                    .AddEntityFrameworkStores<GymDbContext>();
 
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.AccessDeniedPath = "/Account/AccessDenied";
+            });
+
             //builder.Services.ConfigureApplicationCookie(options =>
             //{
             //    options.LoginPath = "/Account/Login";               //Default
