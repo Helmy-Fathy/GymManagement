@@ -13,7 +13,7 @@ namespace GymManagement.BLL.Services.Attachment
         private readonly long _maxFileSize = 5 * 1024 * 1024; //5MB
         private readonly ILogger<AttachmentService> _logger;
         private readonly IWebHostEnvironment _env;
-        private readonly string[] _allowedExtensions = { ".png", "jpeg", "jpg" };
+        private readonly string[] _allowedExtensions = { ".png", ".jpeg", ".jpg" };
 
         public AttachmentService(ILogger<AttachmentService> logger, IWebHostEnvironment env)
         {
