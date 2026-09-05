@@ -35,31 +35,31 @@
                     <ul class="navbar-nav m-auto mb-2 mb-lg-0 mt-3 mt-lg-0">
                         <li class="nav-item">
                         <li class="nav-item">
-                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Home" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Home">Home</a>
+                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Home" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
                         @if (User.IsInRole("SuperAdmin"))
                         {
 
                             <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Members" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Members">Members</a>
+                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Members" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Members" asp-action="Index">Members</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Trainers" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Trainers">Trainers</a>
+                                <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Trainers" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Trainers" asp-action="Index">Trainers</a>
                             </li>
                         }
 
                         <li class="nav-item">
-                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Sessions" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Sessions">Sessions</a>
+                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Sessions" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Sessions" asp-action="Index">Sessions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Plans" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="plans">Plans</a>
+                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Plans" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="plans" asp-action="Index">Plans</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Membership" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Membership">Memberships</a>
+                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Membership" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Membership" asp-action="Index">Memberships</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Booking" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Booking">Sessions Schedule</a>
+                            <a class="nav-link  px-3 py-2 mx-2 fw-bolder fs-5 @(currentController == "Booking" ? "active" : "text-black-alternative")" aria-current="page" asp-controller="Booking" asp-action="Index">Sessions Schedule</a>
                         </li>
                         <li class="nav-item">
                             <form asp-action="Logout" asp-controller="Account" method="post" class="d-inline">
