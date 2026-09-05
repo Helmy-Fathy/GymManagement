@@ -16,7 +16,8 @@ namespace GymManagement.PL
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var pendingMigrations = await dbContext.Database.GetAppliedMigrationsAsync();
+
+            var pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
 
             if (pendingMigrations.Any())
             {
